@@ -1,0 +1,62 @@
+Taken from:
+http://kevin-keraudren.blogspot.com/2014/10/automated-segmentation-of-fetal-brain.html
+
+NOTE:
+sudo apt-get install python2.7-dev
+sudo apt-get install gsl-bin
+sudo apt-get install freeglut3 freeglut3-dev
+sudo apt-get install binutils-gold
+sudo apt-get install g++-4.8
+NEED anaconda 2.1.0
+
+EXPORTS:
+export IRTK_DIR=/home/handong/IRTK
+export PATH="$IRTK_DIR/bin:$PATH"
+export PYTHONPATH=/home/handong/IRTK/build/lib:$PYTHONPATH
+# added by Anaconda 2.1.0 installer
+export PATH="/home/handong/anaconda/bin:$PATH"
+
+
+mkdir ~/Prachi
+cd ~/Prachi
+
+# install Anaconda Python
+wget http://09c8d0b2229f813c1b93-c95ac804525aac4b6dba79b00b39d1d3.r79.cf1.rackcdn.com/Anaconda-2.1.0-Linux-x86_64.sh
+bash Anaconda-2.1.0-Linux-x86_64.sh
+source ~/.bashrc # this changes the version of Python you'll be using
+
+# install missing packages
+conda install opencv
+easy_install joblib
+
+# install IRTK (version used for the github example)
+wget http://www.doc.ic.ac.uk/~kpk09/irtk-6d7d075f69aea616b8cd0d57e07983db6e2f9497.zip
+unzip irtk-6d7d075f69aea616b8cd0d57e07983db6e2f9497.zip
+mv irtk.git irtk
+cd irtk/
+
+## get rid of the FLTK dependency (no GUI needed)
+e packages/CMakeLists.txt # remove rview
+e config/IRTKInclude.cmake # remove FLTK
+
+## take from Anaconda the libraries which are not installed on the system, namely libpng in this case
+mkdir build
+cd build/
+cmake -DPNG_LIBRARY:FILEPATH=/home/kke14/Prachi/anaconda/lib/libpng.so -DPNG_PNG_INCLUDE_DIR:DIRPATH=/home/kke14/Prachi/anaconda/include/ -D BUILD_WITH_PNG=ON -D WRAP_CYTHON=ON ..
+make -j 8
+
+## build the "external" cython code
+cd ~/Prachi/irtk/wrapping/cython/ext
+make
+
+# update PYTHONPATH
+echo "export PYTHONPATH=/home/kke14/Prachi/irtk/build/lib:\$PYTHONPATH" >> ~/.bashrc
+source ~/.bashrc
+
+# try out the example from gitlab
+cd ~/Prachi
+git clone https://github.com/kevin-keraudren/example-motion-correction.git
+cd example-motion-correction/
+make clean
+e run.sh # edit $ROOT_DIR
+./run.sh -a
