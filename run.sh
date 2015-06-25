@@ -60,8 +60,8 @@ then
 fi
 
 # Parameters for all steps
-ROOT_DIR="/home/handong"
-SCRIPT_DIR="$ROOT_DIR/IRTK/wrapping/cython/scripts/"
+ROOT_DIR=${MASKING_BASEDIR:-"/home/kke14/Prachi/"}
+SCRIPT_DIR="$ROOT_DIR/IRTK/wrapping/cython/scripts"
 BIN_DIR="$ROOT_DIR/IRTK/build/bin/"
 ga=29.7
 NEW_SAMPLING=0.8
