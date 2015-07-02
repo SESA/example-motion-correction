@@ -82,7 +82,7 @@ then
     do
         mask_file=${detection_folder}/`basename $filename`
 	
-        python $SCRIPT_DIR/parallel_fetalMask_detection.py \
+        python $SCRIPT_DIR/fetalMask_detection.py \
             $filename \
             $ga \
             $mask_file \
